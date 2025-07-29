@@ -6,7 +6,8 @@
  */
 
 import {ai} from '@/ai/genkit';
-import { GetXLikesInput, GetXLikesInputSchema, GetXLikesOutput, GetXLikesOutputSchema } from "@/app/actions";
+import { GetXLikesInput, GetXLikesInputSchema, GetXLikesOutput, GetXLikesOutputSchema } from '@/lib/types';
+
 
 export async function getXLikes(input: GetXLikesInput): Promise<GetXLikesOutput> {
   return getXLikesFlow(input);

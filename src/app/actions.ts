@@ -2,6 +2,7 @@
 
 import { analyzeXActivity, AnalyzeXActivityInput, AnalyzeXActivityOutput } from "@/ai/flows/analyze-x-activity";
 import { getXLikes } from "@/ai/flows/get-x-likes";
+import { GetXLikesInput, GetXLikesInputSchema, GetXLikesOutput } from "@/lib/types";
 import { z } from "zod";
 
 const tipActionSchema = z.object({
@@ -33,26 +34,6 @@ export async function handleTipAction(input: AnalyzeXActivityInput): Promise<Ana
 }
 
 
-export const GetXLikesInputSchema = z.object({
-  xId: z.string().describe("The user's X (Twitter) ID."),
-});
-export type GetXLikesInput = z.infer<typeof GetXLikesInputSchema>;
-
-
-export const LikeSchema = z.object({
-    xUserId: z.string(),
-    xUsername: z.string(),
-    post: z.string(),
-    avatar: z.string(),
-});
-export type Like = z.infer<typeof LikeSchema>;
-
-export const GetXLikesOutputSchema = z.object({
-  likes: z.array(LikeSchema),
-});
-export type GetXLikesOutput = z.infer<typeof GetXLikesOutputSchema>;
-
-
 export async function handleGetLikesAction(input: GetXLikesInput): Promise<GetXLikesOutput> {
     const parsedInput = GetXLikesInputSchema.safeParse(input);
 
@@ -71,3 +52,5 @@ export async function handleGetLikesAction(input: GetXLikesInput): Promise<GetXL
         };
     }
 }
+
+export type { Like, GetXLikesInput, GetXLikesOutput } from "@/lib/types";
