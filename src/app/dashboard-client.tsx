@@ -27,7 +27,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { usePrivy } from '@privy-io/react-auth';
+import { usePrivy, useSendTransaction } from '@privy-io/react-auth';
+import { credContractAddress, credContractAbi } from '@/lib/cred-contract';
+import { parseEther } from 'viem';
 
 
 const StatCard = ({ title, value, icon: Icon }: { title: string, value: string, icon: React.ElementType }) => (
@@ -48,8 +50,33 @@ export function DashboardClient() {
   const [isFetchingLikes, startFetchingLikesTransition] = useTransition();
   const { toast } = useToast();
   const [recentActivity, setRecentActivity] = useState<Like[]>([]);
+  const [depositAmount, setDepositAmount] = useState('1000');
 
   const isXConnected = !!user?.x;
+
+  const { sendTransaction, isPending: isTxPending } = useSendTransaction({
+    address: credContractAddress,
+    abi: credContractAbi,
+    functionName: 'deposit',
+    args: [],
+    value: parseEther(depositAmount || '0'),
+    chainId: 8453, // Base mainnet
+    onSuccess: (tx) => {
+        console.log('Transaction successful:', tx);
+        toast({
+            title: "Deposit Successful!",
+            description: "Your funds have been added to the vault.",
+        });
+    },
+    onError: (error) => {
+        console.error('Transaction failed:', error);
+        toast({
+            title: "Deposit Failed",
+            description: error.message,
+            variant: "destructive",
+        });
+    }
+  });
 
   useEffect(() => {
     if (isXConnected && user?.x?.id) {
@@ -138,7 +165,7 @@ export function DashboardClient() {
                             <DialogHeader>
                             <DialogTitle>Deposit Funds</DialogTitle>
                             <DialogDescription>
-                                Add funds to your Tipping Vault.
+                                Add funds to your Tipping Vault ($DEGEN on Base).
                             </DialogDescription>
                             </DialogHeader>
                             <div className="grid gap-4 py-4">
@@ -146,11 +173,21 @@ export function DashboardClient() {
                                 <Label htmlFor="amount" className="text-right">
                                     Amount
                                 </Label>
-                                <Input id="amount" defaultValue="1000" className="col-span-3" />
+                                <Input 
+                                    id="amount" 
+                                    value={depositAmount}
+                                    onChange={(e) => setDepositAmount(e.target.value)}
+                                    className="col-span-3" 
+                                />
                                 </div>
                             </div>
                             <DialogFooter>
-                                <Button type="submit">Confirm Deposit</Button>
+                                <Button 
+                                    onClick={() => sendTransaction()} 
+                                    disabled={isTxPending || !depositAmount}
+                                >
+                                    {isTxPending ? <Loader2 className="animate-spin" /> : 'Confirm Deposit'}
+                                </Button>
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
