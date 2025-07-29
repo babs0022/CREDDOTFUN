@@ -26,6 +26,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import { usePrivy } from '@privy-io/react-auth';
 
 
 const StatCard = ({ title, value, icon: Icon }: { title: string, value: string, icon: React.ElementType }) => (
@@ -43,7 +44,7 @@ const StatCard = ({ title, value, icon: Icon }: { title: string, value: string, 
 const recentActivity: any[] = [];
 
 export function DashboardClient() {
-  const [isXConnected, setIsXConnected] = useState(false);
+  const { user, authenticated, login } = usePrivy();
   const [tipAmount, setTipAmount] = useState('10');
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
@@ -70,12 +71,14 @@ export function DashboardClient() {
     });
   };
 
+  const isXConnected = !!user?.x;
+
   return (
     <div className="grid gap-8">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <StatCard title="Tipping Vault Balance" value="0 $DEGEN" icon={Wallet} />
             <StatCard title="Total Tipped" value="0 $DEGEN" icon={Coins} />
-            <StatCard title="X Account" value={isXConnected ? "@user" : "Not Connected"} icon={Twitter} />
+            <StatCard title="X Account" value={isXConnected ? `@${user?.x?.username}` : "Not Connected"} icon={Twitter} />
             <StatCard title="Creators Tipped" value="0" icon={User} />
         </div>
 
@@ -87,13 +90,14 @@ export function DashboardClient() {
                     <CardDescription>Connect your accounts to get started.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Button className="w-full" disabled>
-                        <Wallet className="mr-2 h-4 w-4" /> Wallet Connected
+                    <Button className="w-full" disabled={!authenticated}>
+                        <Wallet className="mr-2 h-4 w-4" /> {authenticated ? "Wallet Connected" : "Connect Wallet"}
                     </Button>
                     <Button 
                         variant={isXConnected ? "secondary" : "default"}
                         className="w-full mt-4" 
-                        onClick={() => setIsXConnected(!isXConnected)}
+                        onClick={login}
+                        disabled={!authenticated}
                     >
                         <Twitter className="mr-2 h-4 w-4" /> {isXConnected ? 'X Account Connected' : 'Connect X Account'}
                     </Button>

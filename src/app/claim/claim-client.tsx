@@ -4,25 +4,24 @@ import { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Twitter, Wallet, CheckCircle2, Gift } from 'lucide-react';
+import { usePrivy } from '@privy-io/react-auth';
+import { useSearchParams } from 'next/navigation';
 
 export function ClaimClient() {
-    const [xVerified, setXVerified] = useState(false);
-    const [walletConnected, setWalletConnected] = useState(false);
+    const { login, user, authenticated } = usePrivy();
+    const searchParams = useSearchParams();
     const [claimed, setClaimed] = useState(false);
-    const [tipper, setTipper] = useState("@somebody");
-    const [tipAmount, setTipAmount] = useState("10");
-
-    const handleVerifyX = () => {
-        setTimeout(() => setXVerified(true), 1000);
-    };
-
-    const handleConnectWallet = () => {
-        setTimeout(() => setWalletConnected(true), 1000);
-    };
+    
+    const tipper = searchParams.get('tipper') || '@somebody';
+    const tipAmount = searchParams.get('amount') || '10';
 
     const handleClaim = () => {
+        // In a real app, this would trigger a transaction to claim the tip.
         setTimeout(() => setClaimed(true), 1500);
     };
+
+    const isXConnected = !!user?.x;
+    const isWalletConnected = authenticated;
 
     if (claimed) {
         return (
@@ -59,25 +58,25 @@ export function ClaimClient() {
                 <div className="space-y-4">
                     <div className="flex items-center justify-between p-4 border rounded-lg">
                         <div className="flex items-center gap-3">
-                            <Twitter className={`h-6 w-6 ${xVerified ? 'text-green-500' : 'text-primary'}`} />
+                            <Twitter className={`h-6 w-6 ${isXConnected ? 'text-green-500' : 'text-primary'}`} />
                             <span className="font-medium">Verify your X Account</span>
                         </div>
-                        {xVerified ? (
+                        {isXConnected ? (
                             <CheckCircle2 className="h-6 w-6 text-green-500" />
                         ) : (
-                            <Button size="sm" onClick={handleVerifyX}>Verify</Button>
+                            <Button size="sm" onClick={login}>Verify</Button>
                         )}
                     </div>
 
                     <div className="flex items-center justify-between p-4 border rounded-lg">
                         <div className="flex items-center gap-3">
-                            <Wallet className={`h-6 w-6 ${walletConnected ? 'text-green-500' : 'text-muted-foreground'}`} />
-                            <span className={`font-medium ${!xVerified && 'text-muted-foreground'}`}>Connect your Wallet</span>
+                            <Wallet className={`h-6 w-6 ${isWalletConnected ? 'text-green-500' : 'text-muted-foreground'}`} />
+                            <span className={`font-medium ${!isXConnected && 'text-muted-foreground'}`}>Connect your Wallet</span>
                         </div>
-                        {xVerified && walletConnected ? (
+                        {isXConnected && isWalletConnected ? (
                              <CheckCircle2 className="h-6 w-6 text-green-500" />
                         ) : (
-                             <Button size="sm" onClick={handleConnectWallet} disabled={!xVerified}>Connect</Button>
+                             <Button size="sm" onClick={login} disabled={!isXConnected}>Connect</Button>
                         )}
                     </div>
                 </div>
@@ -87,7 +86,7 @@ export function ClaimClient() {
                 <Button 
                     className="w-full" 
                     size="lg"
-                    disabled={!xVerified || !walletConnected}
+                    disabled={!isXConnected || !isWalletConnected}
                     onClick={handleClaim}
                 >
                     Claim {tipAmount} $DEGEN

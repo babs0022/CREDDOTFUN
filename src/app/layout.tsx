@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import { cn } from '@/lib/utils';
+import { PrivyProvider } from './privy-provider';
 
 export const metadata: Metadata = {
   title: 'CRED',
@@ -21,10 +22,12 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className={cn("font-body antialiased h-full bg-background")}>
-        <div className="relative flex flex-col h-full">
-          {children}
-        </div>
-        <Toaster />
+        <PrivyProvider>
+          <div className="relative flex flex-col h-full">
+            {children}
+          </div>
+          <Toaster />
+        </PrivyProvider>
       </body>
     </html>
   );
