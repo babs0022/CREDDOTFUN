@@ -16,7 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 export function ConnectWalletButton() {
   const [isConnected, setIsConnected] = useState(false);
-  const walletAddress = '0x1234...5678';
+  const walletAddress = '0x...';
 
   if (isConnected) {
     return (

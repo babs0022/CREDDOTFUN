@@ -9,6 +9,8 @@ export function ClaimClient() {
     const [xVerified, setXVerified] = useState(false);
     const [walletConnected, setWalletConnected] = useState(false);
     const [claimed, setClaimed] = useState(false);
+    const [tipper, setTipper] = useState("@somebody");
+    const [tipAmount, setTipAmount] = useState("10");
 
     const handleVerifyX = () => {
         setTimeout(() => setXVerified(true), 1000);
@@ -33,12 +35,12 @@ export function ClaimClient() {
                 </CardHeader>
                 <CardContent>
                     <p className="text-muted-foreground">
-                        10 $DEGEN has been sent to your wallet. Welcome to CRED!
+                        {tipAmount} $DEGEN has been sent to your wallet. Welcome to CRED!
                     </p>
                 </CardContent>
                 <CardFooter className="flex-col gap-4">
                     <Button className="w-full" asChild>
-                        <a href="/dashboard">Go to your Dashboard</a>
+                        <a href="/">Go to your Dashboard</a>
                     </Button>
                 </CardFooter>
             </Card>
@@ -50,7 +52,7 @@ export function ClaimClient() {
             <CardHeader className="text-center">
                 <CardTitle className="text-2xl font-headline">You've Got a Tip!</CardTitle>
                 <CardDescription>
-                    <span className="font-bold text-primary">@Alice</span> just tipped you <span className="font-bold text-primary">10 $DEGEN</span> for your post!
+                    <span className="font-bold text-primary">{tipper}</span> just tipped you <span className="font-bold text-primary">{tipAmount} $DEGEN</span> for your post!
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -88,7 +90,7 @@ export function ClaimClient() {
                     disabled={!xVerified || !walletConnected}
                     onClick={handleClaim}
                 >
-                    Claim 10 $DEGEN
+                    Claim {tipAmount} $DEGEN
                 </Button>
             </CardFooter>
         </Card>

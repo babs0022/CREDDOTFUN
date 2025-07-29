@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Twitter, Wallet, Coins, Settings, User, MessageSquare, Loader2 } from 'lucide-react';
+import { Twitter, Wallet, Coins, Settings, User, MessageSquare, Loader2, Info } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Table,
@@ -40,29 +40,7 @@ const StatCard = ({ title, value, icon: Icon }: { title: string, value: string, 
   </Card>
 );
 
-const recentActivity = [
-    {
-        xUsername: "@elonmusk",
-        xHandle: "elonmusk",
-        avatar: "https://placehold.co/40x40.png",
-        post: "Looks like we can just put rockets on anything lol",
-        xUserId: "44196397",
-    },
-    {
-        xUsername: "@naval",
-        xHandle: "naval",
-        avatar: "https://placehold.co/40x40.png",
-        post: "Seek wealth, not money or status. Wealth is having assets that earn while you sleep.",
-        xUserId: "7454792",
-    },
-    {
-        xUsername: "@VitalikButerin",
-        xHandle: "VitalikButerin",
-        avatar: "https://placehold.co/40x40.png",
-        post: "The problem with 'move fast and break things' is that the things that get broken are often other people's things.",
-        xUserId: "295218901",
-    }
-];
+const recentActivity: any[] = [];
 
 export function DashboardClient() {
   const [isXConnected, setIsXConnected] = useState(false);
@@ -95,10 +73,10 @@ export function DashboardClient() {
   return (
     <div className="grid gap-8">
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <StatCard title="Tipping Vault Balance" value="4,823 $DEGEN" icon={Wallet} />
-            <StatCard title="Total Tipped" value="177 $DEGEN" icon={Coins} />
-            <StatCard title="X Account" value={isXConnected ? "@Alice" : "Not Connected"} icon={Twitter} />
-            <StatCard title="Creators Tipped" value="12" icon={User} />
+            <StatCard title="Tipping Vault Balance" value="0 $DEGEN" icon={Wallet} />
+            <StatCard title="Total Tipped" value="0 $DEGEN" icon={Coins} />
+            <StatCard title="X Account" value={isXConnected ? "@user" : "Not Connected"} icon={Twitter} />
+            <StatCard title="Creators Tipped" value="0" icon={User} />
         </div>
 
       <div className="grid md:grid-cols-3 gap-8">
@@ -213,35 +191,47 @@ export function DashboardClient() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {recentActivity.map((activity) => (
-                                <TableRow key={activity.xUserId}>
-                                    <TableCell>
-                                        <div className="flex items-center gap-2">
-                                            <Avatar>
-                                                <AvatarImage src={activity.avatar} alt={activity.xUsername} data-ai-hint="avatar abstract" />
-                                                <AvatarFallback>{activity.xUsername.substring(1, 3).toUpperCase()}</AvatarFallback>
-                                            </Avatar>
-                                            <span className="font-medium">{activity.xUsername}</span>
+                            {recentActivity.length === 0 ? (
+                                <TableRow>
+                                    <TableCell colSpan={3} className="h-24 text-center">
+                                         <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                                            <Info className="h-8 w-8" />
+                                            <p className="font-medium">No recent activity found.</p>
+                                            <p className="text-sm">Like some posts on X to get started.</p>
                                         </div>
                                     </TableCell>
-                                    <TableCell className="max-w-xs truncate">{activity.post}</TableCell>
-                                    <TableCell className="text-right">
-                                        <Button 
-                                            size="sm" 
-                                            variant="outline"
-                                            onClick={() => handleTipAndNotify(activity)}
-                                            disabled={isPending}
-                                        >
-                                            {isPending ? (
-                                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                            ) : (
-                                                <MessageSquare className="mr-2 h-4 w-4" />
-                                            )}
-                                            Tip & Notify
-                                        </Button>
-                                    </TableCell>
                                 </TableRow>
-                            ))}
+                            ) : (
+                                recentActivity.map((activity) => (
+                                    <TableRow key={activity.xUserId}>
+                                        <TableCell>
+                                            <div className="flex items-center gap-2">
+                                                <Avatar>
+                                                    <AvatarImage src={activity.avatar} alt={activity.xUsername} data-ai-hint="avatar abstract" />
+                                                    <AvatarFallback>{activity.xUsername.substring(1, 3).toUpperCase()}</AvatarFallback>
+                                                </Avatar>
+                                                <span className="font-medium">{activity.xUsername}</span>
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className="max-w-xs truncate">{activity.post}</TableCell>
+                                        <TableCell className="text-right">
+                                            <Button 
+                                                size="sm" 
+                                                variant="outline"
+                                                onClick={() => handleTipAndNotify(activity)}
+                                                disabled={isPending}
+                                            >
+                                                {isPending ? (
+                                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                ) : (
+                                                    <MessageSquare className="mr-2 h-4 w-4" />
+                                                )}
+                                                Tip & Notify
+                                            </Button>
+                                        </TableCell>
+                                    </TableRow>
+                                ))
+                            )}
                         </TableBody>
                     </Table>
                 </CardContent>
