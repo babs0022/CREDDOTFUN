@@ -58,7 +58,7 @@ export function ConnectWalletButton() {
   return (
     <Button onClick={login}>
       <Wallet className="mr-2 h-4 w-4" />
-      Connect
+      Sign In
     </Button>
   );
 }
