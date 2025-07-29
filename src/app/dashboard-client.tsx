@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Twitter, Wallet, Coins, Settings, User, MessageSquare, Loader2, Info, CheckCircle2 } from 'lucide-react';
+import { Twitter, Wallet, Coins, User, MessageSquare, Loader2, Info, CheckCircle2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Table,
@@ -16,7 +16,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useToast } from '@/hooks/use-toast';
-import { handleTipAction, handleGetLikesAction, type Like } from './actions';
+import { handleTipAction, handleGetLikesAction } from './actions';
+import type { Like } from '@/lib/types';
 import {
   Dialog,
   DialogContent,
@@ -43,7 +44,6 @@ const StatCard = ({ title, value, icon: Icon }: { title: string, value: string, 
 
 export function DashboardClient() {
   const { user, authenticated, login } = usePrivy();
-  const [tipAmount, setTipAmount] = useState('10');
   const [isPending, startTransition] = useTransition();
   const [isFetchingLikes, startFetchingLikesTransition] = useTransition();
   const { toast } = useToast();
@@ -63,6 +63,8 @@ export function DashboardClient() {
 
   const handleTipAndNotify = (activity: any) => {
     startTransition(async () => {
+      // In a real app, the tip amount would be retrieved from user settings
+      const tipAmount = '10'; // Placeholder
       const result = await handleTipAction({
         xActivity: `User liked a post from ${activity.xUsername}: "${activity.post}"`,
         tippingRules: `For every post I like, send ${tipAmount} $DEGEN.`
@@ -176,29 +178,6 @@ export function DashboardClient() {
                             </DialogFooter>
                         </DialogContent>
                     </Dialog>
-                </CardFooter>
-            </Card>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Tipping Rules</CardTitle>
-                    <CardDescription>Set the conditions for automatic tips.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div className="space-y-2">
-                        <Label htmlFor="tip-amount">Tip Amount per Like ($DEGEN)</Label>
-                        <Input 
-                            id="tip-amount" 
-                            type="number" 
-                            placeholder="e.g., 10" 
-                            value={tipAmount}
-                            onChange={(e) => setTipAmount(e.target.value)}
-                        />
-                    </div>
-                </CardContent>
-                <CardFooter>
-                    <Button className="w-full" disabled={!authenticated}>
-                        <Settings className="mr-2 h-4 w-4" /> Save Rules
-                    </Button>
                 </CardFooter>
             </Card>
         </div>

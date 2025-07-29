@@ -14,7 +14,7 @@ export default function Header() {
           <nav className="flex items-center space-x-6 text-sm font-medium">
             <Link
               href="/"
-              className="transition-colors hover:text-foreground/80 text-foreground"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
               Dashboard
             </Link>
@@ -23,6 +23,12 @@ export default function Header() {
               className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
               Claim
+            </Link>
+             <Link
+              href="/settings"
+              className="transition-colors hover:text-foreground/80 text-foreground"
+            >
+              Settings
             </Link>
           </nav>
         </div>
