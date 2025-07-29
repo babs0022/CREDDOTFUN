@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from 'react';
+import { useState, useTransition, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -16,7 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useToast } from '@/hooks/use-toast';
-import { handleTipAction } from './actions';
+import { handleTipAction, handleGetLikesAction, type Like } from './actions';
 import {
   Dialog,
   DialogContent,
@@ -41,13 +41,25 @@ const StatCard = ({ title, value, icon: Icon }: { title: string, value: string, 
   </Card>
 );
 
-const recentActivity: any[] = [];
-
 export function DashboardClient() {
   const { user, authenticated, login } = usePrivy();
   const [tipAmount, setTipAmount] = useState('10');
   const [isPending, startTransition] = useTransition();
+  const [isFetchingLikes, startFetchingLikesTransition] = useTransition();
   const { toast } = useToast();
+  const [recentActivity, setRecentActivity] = useState<Like[]>([]);
+
+  const isXConnected = !!user?.x;
+
+  useEffect(() => {
+    if (isXConnected && user?.x?.id) {
+        startFetchingLikesTransition(async () => {
+            const result = await handleGetLikesAction({ xId: user.x!.id });
+            setRecentActivity(result.likes);
+        });
+    }
+  }, [isXConnected, user?.x?.id]);
+
 
   const handleTipAndNotify = (activity: any) => {
     startTransition(async () => {
@@ -70,8 +82,6 @@ export function DashboardClient() {
       }
     });
   };
-
-  const isXConnected = !!user?.x;
 
   return (
     <div className="grid gap-8">
@@ -210,7 +220,16 @@ export function DashboardClient() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {recentActivity.length === 0 ? (
+                            {isFetchingLikes ? (
+                                <TableRow>
+                                    <TableCell colSpan={3} className="h-24 text-center">
+                                        <div className="flex justify-center items-center">
+                                            <Loader2 className="mr-2 h-8 w-8 animate-spin" />
+                                            <p className="text-muted-foreground">Fetching your latest likes...</p>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ) : recentActivity.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={3} className="h-24 text-center">
                                          <div className="flex flex-col items-center gap-2 text-muted-foreground">
