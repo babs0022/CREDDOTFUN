@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Twitter, Wallet, Coins, Settings, User, MessageSquare, Loader2, Info } from 'lucide-react';
+import { Twitter, Wallet, Coins, Settings, User, MessageSquare, Loader2, Info, CheckCircle2 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Table,
@@ -90,22 +90,37 @@ export function DashboardClient() {
                     <CardDescription>Connect your accounts to get started.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <Button className="w-full" disabled={!authenticated}>
-                        <Wallet className="mr-2 h-4 w-4" /> {authenticated ? "Wallet Connected" : "Connect Wallet"}
-                    </Button>
-                    <Button 
-                        variant={isXConnected ? "secondary" : "default"}
-                        className="w-full mt-4" 
-                        onClick={login}
-                        disabled={!authenticated}
-                    >
-                        <Twitter className="mr-2 h-4 w-4" /> {isXConnected ? 'X Account Connected' : 'Connect X Account'}
-                    </Button>
+                    {!authenticated ? (
+                        <Button className="w-full" onClick={login}>
+                            <User className="mr-2 h-4 w-4" /> Sign In
+                        </Button>
+                    ) : (
+                        <div className="space-y-4">
+                            <div className="flex items-center justify-between p-3 border rounded-lg bg-secondary/50">
+                                <div className="flex items-center gap-3">
+                                    <Wallet className="h-5 w-5 text-primary" />
+                                    <span className="font-medium text-sm">Wallet</span>
+                                </div>
+                                <CheckCircle2 className="h-5 w-5 text-green-500" />
+                            </div>
+                            <div className="flex items-center justify-between p-3 border rounded-lg bg-secondary/50">
+                                <div className="flex items-center gap-3">
+                                    <Twitter className="h-5 w-5 text-primary" />
+                                    <span className="font-medium text-sm">X Account</span>
+                                </div>
+                                {isXConnected ? (
+                                    <CheckCircle2 className="h-5 w-5 text-green-500" />
+                                ) : (
+                                     <Button size="sm" variant="outline" onClick={login}>Connect</Button>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </CardContent>
                 <CardFooter className="flex gap-2">
                     <Dialog>
                         <DialogTrigger asChild>
-                           <Button className="w-full">Deposit</Button>
+                           <Button className="w-full" disabled={!authenticated}>Deposit</Button>
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader>
@@ -129,7 +144,7 @@ export function DashboardClient() {
                     </Dialog>
                     <Dialog>
                         <DialogTrigger asChild>
-                            <Button variant="outline" className="w-full">Withdraw</Button>
+                            <Button variant="outline" className="w-full" disabled={!authenticated}>Withdraw</Button>
                         </DialogTrigger>
                         <DialogContent>
                             <DialogHeader>
@@ -171,7 +186,7 @@ export function DashboardClient() {
                     </div>
                 </CardContent>
                 <CardFooter>
-                    <Button className="w-full">
+                    <Button className="w-full" disabled={!authenticated}>
                         <Settings className="mr-2 h-4 w-4" /> Save Rules
                     </Button>
                 </CardFooter>
